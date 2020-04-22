@@ -1,0 +1,9 @@
+{
+  "name": "ssh-thunder",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "tcp-port-used": "^1.0.1"
+  }
+}
