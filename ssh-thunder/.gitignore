@@ -1,5 +1,8 @@
 *.exe
 3rd/Backup
+uploads
+build
+app.bundle.js
 
 # Logs
 logs

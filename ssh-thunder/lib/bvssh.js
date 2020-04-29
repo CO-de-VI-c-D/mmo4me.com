@@ -71,7 +71,7 @@ const createProfile = (listenPort, listenAddress) => {
     return execFileSync(`./3rd/BvSshProfileWrite.exe`, [listenPort, listenAddress])
 }
 
-const startBvSsh = async (sshHost, sshUser, sshPassword, listenPort = 1271, lastCallPid = null, timeOutMs = 10000, listenAddress = "127.0.0.1") => {
+const startBvSsh = async (sshHost, sshUser, sshPassword, listenPort = 1271, lastCallPid = null, timeOutMs = 10000, listenAddress = "0.0.0.0") => {
     // debug(sshHost, sshUser, sshPassword, listenPort, lastCallPid);
     
     if (lastCallPid) {
@@ -86,7 +86,7 @@ const startBvSsh = async (sshHost, sshUser, sshPassword, listenPort = 1271, last
 
     try {
         await createProfile(listenPort, listenAddress)
-    } catch (error) {
+    } catch (e) {
         debug(`createProfile err: ${e.message}`)
     }
 

@@ -1,5 +1,5 @@
 process.env.DEBUG = "ssh-thunder:*"
-
+require('pug');
 const express = require("express");
 const path = require("path");
 
@@ -23,13 +23,23 @@ const {
 const app = express();
 const port = process.env.PORT || "8000";
 
-const config = require('./config.json');
+const fs = require('fs');
+const config = JSON.parse(fs.readFileSync('./config.json'));
 
 const lineByLine = require('n-readlines');
-const liner = new lineByLine(`${config.file.path}`);
 
+global.liner = {};
 global.portList = [];
 global.BvSsh = {};
+
+try {
+    global.liner = new lineByLine(`${config.file.path}`);
+} catch (error) {
+    config.file.name = "";
+    config.file.path = "";
+    saveConfig(config);
+    debug(error.message);
+}
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
@@ -53,6 +63,7 @@ app.post('/', upload.single('file-to-upload'), (req, res) => {
         config.file.name = req.file.originalname;
         config.file.path = req.file.path;
         saveConfig(config);
+        global.liner = new lineByLine(`${config.file.path}`);
     }
 
     res.redirect('/');
@@ -80,8 +91,16 @@ app.post('/create', (req, res) => {
 app.post('/start', async (req, res) => {
     if (req.body.port) {
         const port = req.body.port
+        const liner = global.liner;
 
-        // console.log(port);
+        // console.log(liner);
+
+        if (Object.keys(liner).length === 0 && liner.constructor === Object) {
+            return res.status(401).send({
+                success: false,
+                message: "Chưa có SSH"
+            });
+        }
 
         const line = liner.next();
         if (line == false) {
@@ -89,7 +108,7 @@ app.post('/start', async (req, res) => {
 
             return res.status(401).send({
                 success: false,
-                message: null
+                message: "Hết SSH"
             });
         }
 
@@ -100,7 +119,7 @@ app.post('/start', async (req, res) => {
 
             return res.status(401).send({
                 success: false,
-                message: null
+                message: "SSH sai định dạng ip|user|pass"
             });
         }
 
@@ -137,10 +156,40 @@ app.post('/start', async (req, res) => {
     }
 });
 
-app.post('/stopall', (req,res)=>{
+app.post('/stop', (req, res) => {
+    if (req.body.port) {
+        const port = req.body.port
+
+        if (global.BvSsh[port]["lastCallPid"]) {
+            try {
+                process.kill(global.BvSsh[port]["lastCallPid"], 9);
+            } catch (error) {
+                debug(error);
+            }
+
+            global.BvSsh[port] = {};
+
+            const portListIndex = global.portList.findIndex(x => x.port === parseInt(port, 10));
+            debug(portListIndex);
+
+            global.portList[portListIndex].status = "Stopped"
+
+            return res.send({
+                success: true,
+                data: global.portList[portListIndex]
+            });
+        }
+    };
+
+    return res.status(401).send({
+        success: false,
+        message: "Lỗi"
+    });
+})
+
+app.post('/stopall', (req, res) => {
     Object.keys(global.BvSsh).forEach(port => {
-        if (global.BvSsh[port]["lastCallPid"]) 
-        {
+        if (global.BvSsh[port]["lastCallPid"]) {
             try {
                 process.kill(global.BvSsh[port]["lastCallPid"], 9);
             } catch (error) {

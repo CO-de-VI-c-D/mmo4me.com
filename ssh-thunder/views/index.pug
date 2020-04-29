@@ -31,11 +31,11 @@ block layout-content
         td.ssh=value.ssh
         td
           button.fa.fa-refresh.start(style='font-size:14px', disabled=(["Running"].indexOf(value.status) === -1 ? true : false)) 
-        td.status=value.status
+        td.status(class=(value.status === "Failed" ? "failed" : ""), class=(value.status === "Running" ? "running" : ""))=value.status
         td.port=value.port
         td
           button.start(hidden=(["Starting", "Running"].indexOf(value.status) !== -1 ? true : false)) START
-          button.stop(hidden=(["Starting", "Running"].indexOf(value.status) === -1 ? true : false)) STOP
+          button.stop(hidden=(["Starting", "Running"].indexOf(value.status) === -1 ? true : false), disabled=(value.status === "Starting" ? true : false)) STOP
 
   |
   |
@@ -52,7 +52,10 @@ block layout-content
       $.ajax({
         type: "POST",
         url: '/start',
-        data: {port: thisPort}
+        data: {port: thisPort},
+        error: function (request, status, error) {
+          alert(JSON.parse(request.responseText).message);
+        }
       })
       .done(function(res) {
           console.log(res.data);
@@ -60,9 +63,6 @@ block layout-content
           txx.closest("tr").find(".stop").attr("disabled", true);
           txx.closest("tr").find(".status").text("Starting");
           txx.closest("tr").find(".ssh").text(`${res.data.ip}|${res.data.user}|${res.data.pwd}`);
-      })
-      .fail(function() {
-          alert( "error" );
       });
 
       console.log(thisPort);

@@ -3,6 +3,14 @@
     width: 50px;
     margin: 5px;
   }
+
+  .status.failed {
+    background-color: darkgrey;
+  }
+
+  .status.running {
+    background-color: orange;
+  }
   
   #start {
     margin: 2px;

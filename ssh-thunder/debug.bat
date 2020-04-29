@@ -1,0 +1,1 @@
+start cmd /c ssh-thunder.exe 2^> logs.txt
