@@ -1,0 +1,61 @@
+
+  #portCreate {  
+    width: 50px;
+    margin: 5px;
+  }
+  
+  #start {
+    margin: 2px;
+  }
+  
+  #sshPath{
+    padding: 10px;
+  }
+
+  #table-wrapper {
+    padding: 10px;
+    margin: 1em;
+    margin-right: 10px;
+  }
+
+  #new {
+    padding: 10px;
+    display: table-cell;
+  }
+  
+  td {
+    width: 5em;
+    text-align: center;
+  }
+
+  tr:hover {background-color: #e0cccc;}
+  
+  th {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  table,
+  td,
+  th {
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: 5px;
+    border: solid 1px;
+    text-align: center;
+  }
+
+  table {
+    width: 100%;
+    margin: 20px auto;
+    table-layout: auto;
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  
+  #sec {
+    margin-right: 10px;
+  }

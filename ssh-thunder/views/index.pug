@@ -1,0 +1,119 @@
+extends layout
+
+block layout-content
+  
+  #table-wrapper
+      label(style="font-size: 2em") #{sshFileName}
+      form(action='/', enctype='multipart/form-data', method='post')
+        input(style="padding: 10px", type='file', accept=".txt", name='file-to-upload')
+        input(type='submit', value='Upload')
+
+  #sshPath
+      label Port List
+      form(action='/create', method='post')
+        input#portCreate(style="margin: 10px", type='input', accept=".txt", name='number')
+        input(type='submit', value='Add')
+
+  table#desc
+  
+    tr
+      th SSH
+      th
+      th Status
+      th Port
+      th#new
+        form#stopall(action='/stopall', method='post')
+            input#start(type='submit', onclick='return confirm("Chắc chưa?")', value='STOP ALL')
+        button#start(disabled=true).startall START ALL
+      
+    each value, index in portList
+      tr
+        td.ssh=value.ssh
+        td
+          button.fa.fa-refresh.start(style='font-size:14px', disabled=(["Running"].indexOf(value.status) === -1 ? true : false)) 
+        td.status=value.status
+        td.port=value.port
+        td
+          button.start(hidden=(["Starting", "Running"].indexOf(value.status) !== -1 ? true : false)) START
+          button.stop(hidden=(["Starting", "Running"].indexOf(value.status) === -1 ? true : false)) STOP
+
+  |
+  |
+  |___   Auto Refresh : 15s (Inactive Only)
+
+  script.
+    console.log("Script Loaded.")
+    $(".start").click(function() {
+      var txx = $(this)
+
+      var thisPort = txx.closest("tr").find(".port").text();
+      
+      
+      $.ajax({
+        type: "POST",
+        url: '/start',
+        data: {port: thisPort}
+      })
+      .done(function(res) {
+          console.log(res.data);
+          txx.attr("disabled", true);
+          txx.closest("tr").find(".stop").attr("disabled", true);
+          txx.closest("tr").find(".status").text("Starting");
+          txx.closest("tr").find(".ssh").text(`${res.data.ip}|${res.data.user}|${res.data.pwd}`);
+      })
+      .fail(function() {
+          alert( "error" );
+      });
+
+      console.log(thisPort);
+      //- $("#resultas").append($item);       // Outputs the answer
+    });
+
+  script.
+    console.log("Script Loaded.")
+    $(".stop").click(function() {
+      var thisPort = $(this).closest("tr").find(".port").text();
+      var txx = $(this)
+      
+      $.ajax({
+        type: "POST",
+        url: '/stop',
+        data: {port: thisPort}
+      })
+      .done(function(res) {
+          console.log(res.data);
+          txx.attr("disabled", true);
+          txx.closest("tr").find(".status").text("Stopping");
+      })
+      .fail(function() {
+          alert( "error" );
+      });
+
+      console.log(thisPort);
+      //- $("#resultas").append($item);       // Outputs the answer
+    });
+
+  script.
+    var time = new Date().getTime();
+    $(document.body).bind("mousemove keypress", function(e) {
+      time = new Date().getTime();
+    });
+      
+    function refresh() {
+      if(new Date().getTime() - time >= 15000)
+        window.location.reload(true);
+      else
+        setTimeout(refresh, 10000);
+    };
+
+    setTimeout(refresh, 10000);
+
+  script(type='text/javascript').
+    function clicked() {
+      if (confirm('Chắc chưa?')) {
+        yourformelement.submit();
+      } else {
+        return false;
+      }
+    }
+

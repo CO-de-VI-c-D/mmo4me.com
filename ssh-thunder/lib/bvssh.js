@@ -3,10 +3,13 @@ const {
     execFile,
     execFileSync
 } = require('child_process');
+const debug = require("debug")("ssh-thunder:bvssh");
 
 execFile('./3rd/AutoBvSsh.exe').unref();
 
 const checkPort = (exe, timeOutMs, listenPort) => new Promise((resolve) => {
+    debug(listenPort, "checkPort");
+
     let timeout, interval;
     exe.unref();
 
@@ -21,7 +24,7 @@ const checkPort = (exe, timeOutMs, listenPort) => new Promise((resolve) => {
         });
     }, timeOutMs);
 
-    interval = setInterval(() => tcp.waitUntilUsed(listenPort, 100, 1000)
+    interval = setInterval(() => tcp.waitUntilUsed(parseInt(listenPort, 10), 100, 1000)
         .then(() => {
             clearTimeout(timeout);
             clearInterval(interval);
@@ -36,7 +39,7 @@ const checkPort = (exe, timeOutMs, listenPort) => new Promise((resolve) => {
         clearTimeout(timeout);
         clearInterval(interval);
 
-        console.log(`BvSsh.exe exited with code ${code}`);
+        debug(`BvSsh.exe exited with code ${code}`);
 
         resolve({
             success: false,
@@ -54,6 +57,7 @@ const runCmd = ({
     listenPort,
     hideAll = true
 }) => {
+    debug(listenPort, "runCmd");
     const args = [`-host=${sshHost}`, `-port=${sshPort}`, `-user=${sshUser}`, `-password=${sshPassword}`, "-loginOnStartup", "-exitOnLogout", `-baseRegistry=HKEY_CURRENT_USER\\Software\\SshThunder\\Bitvise\\${listenPort}`]
 
     if (hideAll) {
@@ -68,11 +72,13 @@ const createProfile = (listenPort, listenAddress) => {
 }
 
 const startBvSsh = async (sshHost, sshUser, sshPassword, listenPort = 1271, lastCallPid = null, timeOutMs = 10000, listenAddress = "127.0.0.1") => {
+    // debug(sshHost, sshUser, sshPassword, listenPort, lastCallPid);
+    
     if (lastCallPid) {
         try {
             process.kill(lastCallPid, 9);
         } catch (error) {
-            // console.log(error)
+            debug(error);
         }
 
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -81,10 +87,10 @@ const startBvSsh = async (sshHost, sshUser, sshPassword, listenPort = 1271, last
     try {
         await createProfile(listenPort, listenAddress)
     } catch (error) {
-        console.log(error.message);
+        debug(`createProfile err: ${e.message}`)
     }
 
-    const listenPortInUsed = await tcp.check(listenPort, '127.0.0.1') //.then(r => console.log);
+    const listenPortInUsed = await tcp.check(parseInt(listenPort, 10), '127.0.0.1') //.then(r => console.log);
     if (!listenPortInUsed) {
         const exe = await runCmd({
             sshHost,
