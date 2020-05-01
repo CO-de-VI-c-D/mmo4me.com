@@ -12,7 +12,7 @@
     background-color: orange;
   }
   
-  #start {
+  #startall {
     margin: 2px;
   }
   
@@ -31,11 +31,6 @@
     display: table-cell;
   }
   
-  td {
-    width: 5em;
-    text-align: center;
-  }
-
   tr:hover {background-color: #e0cccc;}
   
   th {
@@ -63,7 +58,7 @@
     border: 1px solid black;
     border-collapse: collapse;
   }
-  
+
   #sec {
     margin-right: 10px;
   }

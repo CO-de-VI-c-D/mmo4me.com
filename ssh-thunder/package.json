@@ -5,9 +5,9 @@
   "license": "MIT",
   "scripts": {
     "test": "set DEBUG=ssh-thunder:test && nodemon --ignore 'P:\\Git\\mmo4me\\ssh-thunder\\test\\5bvssh.js' ./test/5bvssh.js",
-    "dev": "nodemon ./app.js",
+    "dev": "nodemon app.js",
     "ui": "browser-sync start --proxy=localhost:8000 --files='**/*.css, **/*.pug, **/*.js' --ignore=node_modules --reload-delay 10 --no-ui --no-notify",
-    "build" : "browserify app.js --node -o app.bundle.js  && copy debug.bat build/debug.bat && nexe app.bundle.js -r \"./public/*\" -r \"./views/*\" -o build/ssh-thunder.exe"
+    "build": "browserify app.js --node -o app.bundle.js  && copy debug.bat build/debug.bat && nexe app.bundle.js -r \"./public/*\" -r \"./views/*\" -o build/ssh-thunder.exe"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

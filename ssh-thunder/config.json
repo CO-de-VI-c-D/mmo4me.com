@@ -4,5 +4,6 @@
         "path": "uploads\\a8a778ba904130056e4b53ad3580b190"
     },
     "startPort": 1271,
-    "delim": "|"
+    "delim": "|",
+    "BitviseSshTimeOut": 30000
 }

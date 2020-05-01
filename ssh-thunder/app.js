@@ -12,8 +12,6 @@ const upload = multer({
 
 const bodyParser = require('body-parser')
 
-const tcp = require('tcp-port-used');
-
 const fileRm = require('./lib/remove');
 const saveConfig = require('./lib/savecf');
 const {

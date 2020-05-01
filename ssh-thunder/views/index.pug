@@ -2,6 +2,8 @@ extends layout
 
 block layout-content
   
+  //- a(href='/config') | Config |
+
   #table-wrapper
       label(style="font-size: 2em") #{sshFileName}
       form(action='/', enctype='multipart/form-data', method='post')
@@ -13,18 +15,19 @@ block layout-content
       form(action='/create', method='post')
         input#portCreate(style="margin: 10px", type='input', accept=".txt", name='number')
         input(type='submit', value='Add')
-
+      
   table#desc
   
     tr
       th SSH
       th
+        button#renewall.fa.fa-refresh.renewall(style='font-size:20px', onclick='renewall()')
       th Status
       th Port
       th#new
         form#stopall(action='/stopall', method='post')
-            input#start(type='submit', onclick='return confirm("Chắc chưa?")', value='STOP ALL')
-        button#start(disabled=true).startall START ALL
+            input#start(type='submit', onclick='return confirm("STOP ALL - Chắc chưa?")', value='STOP ALL')
+        button#startall(disabled=false, onclick='startall()').startall START ALL
       
     each value, index in portList
       tr
@@ -40,7 +43,7 @@ block layout-content
   |
   |
   |___   Auto Refresh : 15s (Inactive Only)
-
+  
   script.
     console.log("Script Loaded.")
     $(".start").click(function() {
@@ -108,12 +111,36 @@ block layout-content
 
     setTimeout(refresh, 10000);
 
-  script(type='text/javascript').
-    function clicked() {
-      if (confirm('Chắc chưa?')) {
-        yourformelement.submit();
+  script.
+    function startall() {
+      if (confirm('START ALL - Chắc chưa?')) {
+          document.querySelector('#startall').disabled = true;
+
+          [...document.querySelectorAll('#desc > tbody > tr > td:nth-child(5) > button.start')].forEach((x) => {
+              if (!x.disabled && !x.hidden) x.click();
+          });
+
+          setTimeout(() => {
+              document.querySelector('#startall').disabled = false;
+          }, 3000);
       } else {
-        return false;
+          return false;
       }
     }
+    
+  script.
+    function renewall() {
+      if (confirm('RENEW ALL - Chắc chưa?')) {
+          document.querySelector('#renewall').disabled = true;
 
+          [...document.querySelectorAll('#desc > tbody > tr > td:nth-child(2) > button')].forEach((x) => {
+              if (!x.disabled) x.click();
+          });
+
+          setTimeout(() => {
+              document.querySelector('#renewall').disabled = false;
+          }, 3000);
+      } else {
+          return false;
+      }
+    }

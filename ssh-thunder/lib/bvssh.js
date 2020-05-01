@@ -3,7 +3,7 @@ const {
     execFile,
     execFileSync
 } = require('child_process');
-const debug = require("debug")("ssh-thunder:bvssh");
+const debug = require("debug")("ssh-thunder:lib:bvssh");
 
 execFile('./3rd/AutoBvSsh.exe').unref();
 
@@ -13,8 +13,27 @@ const checkPort = (exe, timeOutMs, listenPort) => new Promise((resolve) => {
     let timeout, interval;
     exe.unref();
 
+    exe.once('close', (code) => {
+        clearTimeout(timeout);
+        clearInterval(interval);
+
+        debug(`BvSsh.exe exited with code ${code}`);
+
+        resolve({
+            success: false,
+            message: `BvSsh.exe exited with code ${code}`,
+            errCode: 2
+        });
+    });
+
     timeout = setTimeout(() => {
         clearInterval(interval);
+
+        try {
+            exe.removeAllListeners("close");
+        } catch (error) {
+            debug(`exe.removeAllListeners("close") : ${error.message}`);
+        }
 
         resolve({
             success: false,
@@ -29,24 +48,17 @@ const checkPort = (exe, timeOutMs, listenPort) => new Promise((resolve) => {
             clearTimeout(timeout);
             clearInterval(interval);
 
+            try {
+                exe.removeAllListeners("close");
+            } catch (error) {
+                debug(`exe.removeAllListeners("close") : ${error.message}`);
+            }
+
             resolve({
                 success: true,
                 exe
             });
         }, (e) => e), 1000);
-
-    exe.once('close', (code) => {
-        clearTimeout(timeout);
-        clearInterval(interval);
-
-        debug(`BvSsh.exe exited with code ${code}`);
-
-        resolve({
-            success: false,
-            message: `BvSsh.exe exited with code ${code}`,
-            errCode: 2
-        });
-    });
 });
 
 const runCmd = ({
@@ -73,7 +85,7 @@ const createProfile = (listenPort, listenAddress) => {
 
 const startBvSsh = async (sshHost, sshUser, sshPassword, listenPort = 1271, lastCallPid = null, timeOutMs = 10000, listenAddress = "0.0.0.0") => {
     // debug(sshHost, sshUser, sshPassword, listenPort, lastCallPid);
-    
+
     if (lastCallPid) {
         try {
             process.kill(lastCallPid, 9);
