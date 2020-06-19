@@ -6,6 +6,7 @@ const {
 const debug = require("debug")("ssh-thunder:lib:bvssh");
 
 execFile('./3rd/AutoBvSsh.exe').unref();
+execFile('./3rd/SysTrayRefresh.exe').unref();
 
 const checkPort = (exe, timeOutMs, listenPort) => new Promise((resolve) => {
     debug(listenPort, "checkPort");

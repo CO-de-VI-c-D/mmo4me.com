@@ -1,0 +1,9 @@
+{
+  "name": "fbcm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer-core": "^3.0.2"
+  }
+}
