@@ -41,7 +41,7 @@ docReady(() => {
         // console.log(imgSrc);
         let isMatch = false;
         toDataURL(imgSrc, (base64) => {
-            console.log(base64);
+            // console.log(base64);
             if (questMatch.filter(img => img.data === base64).length) {
                 console.log("Match Element ID: " + id);
                 document.getElementById(id).click();
