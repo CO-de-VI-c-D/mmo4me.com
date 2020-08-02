@@ -12,3 +12,4 @@ fileList.forEach(file => {
 });
 
 fs.writeFileSync('./data.json', JSON.stringify(data, null, 4));
+fs.writeFileSync('./data-min.json', JSON.stringify(data));
