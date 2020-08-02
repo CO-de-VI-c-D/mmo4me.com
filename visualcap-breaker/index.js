@@ -38,7 +38,7 @@ docReady(() => {
         const id = "visualCaptcha-img-" + index;
         console.log(id)
         const imgSrc = document.getElementById(id).src;
-        console.log(imgSrc);
+        // console.log(imgSrc);
         let isMatch = false;
         toDataURL(imgSrc, (base64) => {
             console.log(base64);
