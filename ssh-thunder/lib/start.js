@@ -4,6 +4,8 @@ const {
     startBvSsh
 } = require('../lib/bvssh');
 
+const fs = require('fs');
+
 
 const start = async (port, timeOutMs) => {
     // debug(global.BvSsh[port]);
@@ -14,6 +16,7 @@ const start = async (port, timeOutMs) => {
     const portListIndex = global["portList"].findIndex(x => x.port === parseInt(port, 10));
     // console.log(portListIndex);
     global["portList"][portListIndex]["status"] = global.BvSsh[port]["rp"]["success"] === true ? "Running" : "Failed";
+    if (global.BvSsh[port]["rp"]["success"] === true) fs.appendFileSync('./live.txt', [sshObj.ip, sshObj.user, sshObj.pwd, '\r\n'].join('|'));
 
     if (global.BvSsh[port]["rp"]["success"]) {
         global.BvSsh[port].lastCallPid = global.BvSsh[port].rp.exe.pid

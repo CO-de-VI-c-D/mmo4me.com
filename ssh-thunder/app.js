@@ -2,7 +2,7 @@ process.env.DEBUG = "ssh-thunder:*"
 require('pug');
 const express = require("express");
 const path = require("path");
-
+const child = require('child_process');
 const debug = require('debug')("ssh-thunder:api");
 
 const multer = require('multer');
@@ -206,6 +206,14 @@ app.post('/stopall', (req, res) => {
     res.redirect('/');
 })
 
+const detectChrome = () => {
+    const pathX64 = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+    if (fs.existsSync(pathX64)) {
+        child.exec(`"${pathX64}" --user-data-dir="C:/profile" --app="http://localhost:${port}"`);
+    }
+}
+
 app.listen(8000, "0.0.0.0", () => {
     console.log(`Listening to requests on http://localhost:${port}`);
+    detectChrome();
 });
