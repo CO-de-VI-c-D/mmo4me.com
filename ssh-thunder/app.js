@@ -48,7 +48,7 @@ app.use(bodyParser.urlencoded({
 
 app.get("/", (req, res) => {
     res.render("index", {
-        title: "SSH Thunder | YoloTEAM | CoderMMO fb group | MMO4ME.COM 4rum",
+        title: "SSH Thunder | CoderMMO fb group | MMO4ME.COM forum",
         sshFileName: config.file.name,
         portList: global.portList
     });
